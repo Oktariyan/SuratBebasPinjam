@@ -1,0 +1,105 @@
+package com.example.suratbebaspinjam.shared
+
+import android.app.Application
+import android.util.Log
+import androidx.credentials.CredentialManager
+import androidx.credentials.CustomCredential
+import androidx.credentials.GetCredentialRequest
+import com.example.suratbebaspinjam.BuildConfig
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.UserProfileChangeRequest
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.tasks.await
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import javax.inject.Inject
+
+class AuthenticationRepositoryImpl @Inject constructor(
+    private val context: Application,
+    private val auth: FirebaseAuth,
+    private val manager: CredentialManager
+): AuthenticationRepository {
+
+    override fun createAccountWithEmail(username: String, email: String, password: String): Flow<AuthenticationResponse> = flow {
+        emit(AuthenticationResponse.Loading)
+        try {
+            auth.createUserWithEmailAndPassword(email, password).await()
+            updateUserDisplayName(username)
+        } catch (e: FirebaseAuthUserCollisionException) {
+            emit(AuthenticationResponse.Error("Email already in use"))
+            return@flow
+        } catch (e: FirebaseAuthInvalidCredentialsException) {
+            emit(AuthenticationResponse.Error("Invalid credentials"))
+            return@flow
+        } catch (e: Exception) {
+            emit(AuthenticationResponse.Error("Failed to create account"))
+            return@flow
+        }
+
+        val user = auth.currentUser
+        try {
+            emit(AuthenticationResponse.Success)
+        } catch (e: Exception) {
+            try { user?.delete()?.await() } catch (de: Exception) {
+                de.printStackTrace()
+            }
+
+            e.printStackTrace()
+            emit(AuthenticationResponse.Error(e.message ?: ""))
+            return@flow
+        }
+    }
+
+    private fun updateUserDisplayName(username: String) {
+        auth.currentUser?.updateProfile(UserProfileChangeRequest.Builder().setDisplayName(username).build())
+    }
+
+    override fun loginWithEmail(email: String, password: String): Flow<AuthenticationResponse> = flow {
+        emit(AuthenticationResponse.Loading)
+        try {
+            auth.signInWithEmailAndPassword(email, password).await()
+            emit(AuthenticationResponse.Success)
+        } catch (e: Exception) {
+            emit(AuthenticationResponse.Error("Sign-in failed: ${e.message}"))
+        }
+    }
+
+    override fun signInWithGoogle(): Flow<AuthenticationResponse> = flow {
+        emit(AuthenticationResponse.Loading)
+
+        val googleIdOption = GetGoogleIdOption.Builder()
+            .setFilterByAuthorizedAccounts(false)
+            .setServerClientId(BuildConfig.CLIENT_KEY)
+            .setAutoSelectEnabled(false)
+            .build()
+
+        val request = GetCredentialRequest.Builder()
+            .addCredentialOption(googleIdOption)
+            .build()
+
+        try {
+            val credential = manager.getCredential(context, request).credential
+            if (credential !is CustomCredential) {
+                throw Exception("Credential not found")
+            }
+
+            if (credential.type != GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+                emit(AuthenticationResponse.Error("Invalid credential type"))
+                return@flow
+            }
+
+            val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
+            val firebaseCredential = GoogleAuthProvider.getCredential(googleIdTokenCredential.idToken, null)
+            auth.signInWithCredential(firebaseCredential).await()
+        } catch (e: Exception) {
+            emit(AuthenticationResponse.Error(e.message ?: "An unexpected error occurred"))
+            return@flow
+        }
+
+        emit(AuthenticationResponse.Success)
+    }
+}

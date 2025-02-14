@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name">surat bebas pinjam</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <!-- Auth -->
+    <string name="signup">Register</string>
+    <string name="login">Sign In</string>
+    <string name="logout">Sign Out</string>
+
+    <string name="title_signup_page">New here?</string>
+    <string name="message_signup_page">Please fill out this form to continue</string>
+    <string name="message_signup_page_sign_in">Already have an account? Sign In</string>
+
+    <string name="title_login_page">Welcome Back!</string>
+    <string name="message_login_page">Lets log back in to your account</string>
+    <string name="message_login_page_sign_up">Don\'t have an account? Sign Up</string>
+
+    <string name="greeting">Halo %1$s,</string>
+    <string name="email_hint">example@google.com</string>
+    <string name="description">Description</string>
+
+    <string name="name">Full Name</string>
+    <string name="log_in_to_your_account">Log in to your account</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="todo">TODO</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="log_in">Log In</string>
+    <string name="don_t_have_an_account_sign_up">Don\'t have an account? Sign up</string>
+    <string name="sign_in_with">Sign in with</string>
+    <string name="google">Google</string>
+    <string name="create_your_account">Create your account</string>
+    <string name="full_name">Full Name</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="already_have_an_account_log_in">Already have an account? Log In</string>
+    <string name="notification_settings_title"> Notification Settings</string>
+    <string name="push_notifications">Push Notifications</string>
+    <string name="email_notifications">Email Notifications</string>
+
+</resources>
