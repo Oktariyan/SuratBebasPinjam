@@ -108,7 +108,7 @@ class SignInFragment : Fragment() {
     private fun goToMainActivity() {
         val intent = Intent(requireActivity(),MainActivity::class.java)
         startActivity(intent)
-        requireActivity().finish() // Tutup com.example.suratbebaspinjam.auth.AuthActivity agar tidak bisa kembali ke login
+        requireActivity().finish()
     }
 
     private fun onLoading(isLoading: Boolean) {

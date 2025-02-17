@@ -44,13 +44,6 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideUserRepository(
-        auth: FirebaseAuth,
-        messaging: FirebaseMessaging
-    ): UserRepository = UserRepositoryImpl(auth, messaging)
-
-    @Provides
-    @Singleton
     fun provideRetrofit(): Retrofit {
         val loggingInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
 

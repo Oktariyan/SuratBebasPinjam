@@ -48,4 +48,12 @@ class UserRepositoryImpl @Inject constructor(
             emit(TokenResponse.Failed)
         }
     }
+
+    override fun createTargetAlerts(): Flow<ResponseWrapper<TargetAlerts>> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getTargetAlerts(): List<String> {
+        TODO("Not yet implemented")
+    }
 }

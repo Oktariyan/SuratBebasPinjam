@@ -5,6 +5,11 @@
     android:id="@+id/bottom_navigation"
     app:startDestination="@id/signInFragment">
 
+    <activity
+        android:id="@+id/authActivity"
+        android:name="com.example.suratbebaspinjam.auth.AuthActivity"
+        android:label="AuthActivity" />
+
     <fragment
         android:id="@+id/signInFragment"
         android:name="com.example.suratbebaspinjam.signin.SignInFragment"
@@ -14,6 +19,7 @@
             android:id="@+id/action_signInFragment_to_signUpFragment"
             app:destination="@id/signUpFragment" />
     </fragment>
+
     <activity
         android:id="@+id/mainActivity"
         android:name="com.example.suratbebaspinjam.MainActivity"
@@ -25,9 +31,7 @@
         <action
             android:id="@+id/action_signUpFragment_to_signInFragment"
             app:destination="@id/signInFragment" />
-        <action
-            android:id="@+id/action_signUpFragment_to_mainActivity"
-            app:destination="@id/mainActivity" />
     </fragment>
+
 
 </navigation>
